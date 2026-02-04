@@ -18,7 +18,7 @@ Diferente de scripts básicos, este projeto foca na **experiência do usuário**
 - [x] Exportação de relatório formatado para `.csv`.
 
 ## 🛠️ Tecnologias e Conceitos
-- **Linguagem:** Python 3.x
+- **Linguagem:** Python 
 - **Módulos:** `csv` para manipulação de arquivos.
 - **Conceitos:** Manipulação de dicionários, tratamento de exceções (`try/except`), funções e lógica financeira.
 
