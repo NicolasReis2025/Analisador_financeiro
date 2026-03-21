@@ -19,7 +19,6 @@ def exportar_csv(dicionario, total_gasto, nome_arquivo):
     except Exception as e:
         print(f"❌ Erro ao salvar o arquivo: {e}")
 
-
 def mostrar_despesas(dicionario, total_gasto):
 
     # Função para mostrar o nome e os gastos das despesas
@@ -45,10 +44,42 @@ def excluir_despesa(dicionario, nome_despesa):
     # Função para excluir despesa
 
     if nome_despesa in dicionario:
-        del dicionario[nome_despesa]
+        valor = dicionario.pop(nome_despesa)
         print(f"\n'{nome_despesa}' excluida com sucesso")
+        return valor
     else:
         print(f"\n'{nome_despesa}' não está cadastrada no sistema ")
+        return 0
+
+def editar_despesa(dicionario, nome_despesa):
+
+    # Função para editar nome ou custo da despesa
+
+    if nome_despesa in dicionario:
+        print(
+        "\n[1] Editar nome" 
+        "\n[2] Editar custo"
+    )
+        while True:
+            opcao = int(input("Digite uma opção: "))
+            if opcao in [1, 2]:
+                break
+            else:
+                print("ERRO: opção inválida. Tente novamente")
+        
+        if opcao == 1:
+            novo_nome = str(input("Digite o novo nome da despesa: ")).title()
+            dicionario[novo_nome] = dicionario.pop(nome_despesa) 
+            print(f"\nDespesa renomeada para '{novo_nome}' com sucesso!")
+        
+        else:
+            novo_custo = float(input("Digite o novo custo: "))
+            dicionario[nome_despesa] = round(novo_custo, 2)
+            print(f"\nCusto 'R${novo_custo}' atualizado com sucesso")
+    
+    else:
+        print(f"ERRO: despesa '{nome_despesa}' não encontrada no sistema")
+            
 
 
 print("\n====== ANALISADOR DE FINANÇAS ======= \n")
@@ -61,17 +92,18 @@ while True:
     print(
         "\n[1] Adicionar despesa" 
         "\n[2] Deletar despesa" 
-        "\n[3] Sair e mostrar relatório"
+        "\n[3] Editar despesa" 
+        "\n[4] Sair e mostrar relatório"
     )
     try:
         while True:
             opcao = int(input("Digite uma opção: "))
-            if opcao not in [1, 2, 3]:
+            if opcao not in [1, 2, 3, 4]:
                 print("❌Opção inválida. Tente novamente!")
             else:
                 break
         
-        if opcao == 3:
+        if opcao == 4:
             while True:
                 if despesas:
                     try:
@@ -108,31 +140,34 @@ while True:
                 if verificar_saude_financeira(tot, renda_mensal):
                     break
             
-            if opcao == 2:
+            elif opcao == 2:
                 nome_despesa = str(input("Digite o nome da despesa para excluir: ")).title()
-                excluir_despesa(despesas, nome_despesa)
+                tot -= excluir_despesa(despesas, nome_despesa)
+            
+            elif opcao == 3:
+                nome_despesa = str(input("Digite o nome da despesa para editar: ")).title()
+                editar_despesa(despesas, nome_despesa)
 
          
     except ValueError:
-        print("❌ERRO: A opção precisa ser um numero entre (1 ~ 2). Tente novamente!")
+        print("❌ERRO: A opção precisa ser um numero entre (1 ~ 4). Tente novamente!")
 
 
 if despesas:
-    total = sum(despesas.values())
     maior_despesa = max(despesas.items(), key=lambda x: x[1])
     menor_despesa = min(despesas.items(), key=lambda x: x[1])
-    media_categoria = total / len(despesas)
+    media_categoria = tot / len(despesas)
 
-    mostrar_despesas(despesas, total)
+    mostrar_despesas(despesas, tot)
 
-    if total <= renda_mensal:
+    if tot <= renda_mensal:
         print("\n📊 RESUMO ESTATÍSTICO: ")
-        print(f"Total da despesa mensal:\tR${total:.2f}")
+        print(f"Total da despesa mensal:\tR${tot:.2f}")
         print(f"Maior despesa:\t{maior_despesa[0].title()} | R${maior_despesa[1]:.2f}")
         print(f"Menor despesa:\t{menor_despesa[0].title()} | R${menor_despesa[1]:.2f}")
         print(f"Média de custo por categoria:\tR${media_categoria:.2f}")
 
-    valor_economizado = renda_mensal - total
+    valor_economizado = renda_mensal - tot
     if valor_economizado > 0:
         print("\n📈 DICA DE INVESTIMENTOS: ")
         montante = valor_economizado * (((1 + 0.008)**12 - 1) / 0.008)
